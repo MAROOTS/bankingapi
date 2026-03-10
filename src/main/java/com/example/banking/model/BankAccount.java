@@ -1,10 +1,17 @@
 package com.example.banking.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+@Entity
+@Table(name = "bank_accounts")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BankAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
