@@ -1,8 +1,6 @@
 package com.example.banking.controller;
 
-import com.example.banking.dto.DepositWithdrawRequest;
-import com.example.banking.dto.TransactionResponse;
-import com.example.banking.dto.TransferRequest;
+import com.example.banking.dto.*;
 import com.example.banking.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

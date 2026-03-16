@@ -1,8 +1,6 @@
 package com.example.banking.service;
 
-import com.example.banking.dto.DepositWithdrawRequest;
-import com.example.banking.dto.TransactionResponse;
-import com.example.banking.dto.TransferRequest;
+import com.example.banking.dto.*;
 import com.example.banking.model.BankAccount;
 import com.example.banking.model.Transaction;
 import com.example.banking.repository.BankAccountRepository;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,6 +101,50 @@ public class TransactionService {
                 .map(TransactionResponse::from)
                 .collect(Collectors.toList());
     }
+    public List<TransactionResponse> getFilteredTransactions(String accountId, String email, TransactionFilterRequest filter){
+        BankAccount account = accountRepository.findById(accountId)
+                .orElseThrow(()->new RuntimeException("Account not found"));
+
+        validateOwnership(account,email);
+
+        List<Transaction> transactions = transactionRepository.findWithFilters(
+                accountId,
+                filter.getType(),
+                filter.getStatus(),
+                filter.getMinAmount(),
+                filter.getMaxAmount(),
+                filter.getStartDate(),
+                filter.getEndDate()
+        );
+        Comparator<Transaction> comparator = switch (filter.getSortBy()){
+            case "amount" -> Comparator.comparing(Transaction::getAmount);
+            default -> Comparator.comparing(Transaction::getCreatedAt);
+        };
+        if ("ASC".equalsIgnoreCase(filter.getSortDirection())){
+            transactions.sort(comparator);
+        }else {
+            transactions.sort(comparator.reversed());
+        }
+        return transactions.stream()
+                .map(TransactionResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    public TransactionSummaryResponse getAccountSummary(String accountId,String email){
+        BankAccount account =accountRepository.findById(accountId)
+                .orElseThrow(()->new RuntimeException("Account not found"));
+        validateOwnership(account,email);
+
+        return TransactionSummaryResponse.builder()
+                .accountNumber(account.getAccountNumber())
+                .currentBalance(account.getBalance())
+                .totalTransactions(transactionRepository.countByAccountId(accountId))
+                .totalDeposits(transactionRepository.sumDeposits(accountId))
+                .totalWithdrawals(transactionRepository.sumWithdrawals(accountId))
+                .totalTransfersOut(transactionRepository.sumTransfersOut(accountId))
+                .build();
+    }
+
 //helpers
     private BankAccount getAccountByNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
