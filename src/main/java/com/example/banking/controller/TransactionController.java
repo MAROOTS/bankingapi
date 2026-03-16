@@ -47,4 +47,21 @@ public class TransactionController {
         return ResponseEntity.ok(
                 transactionService.getAccountTransactions(accountId, email));
     }
+
+    @GetMapping("/account/{accountId}/filter")
+    public ResponseEntity<List<TransactionResponse>> getFilteredTransactions(
+            @AuthenticationPrincipal String email,
+            @PathVariable String accountId,
+            @ModelAttribute TransactionFilterRequest filter) {
+        return ResponseEntity.ok(
+                transactionService.getFilteredTransactions(accountId, email, filter));
+    }
+
+    @GetMapping("/account/{accountId}/summary")
+    public ResponseEntity<TransactionSummaryResponse> getAccountSummary(
+            @AuthenticationPrincipal String email,
+            @PathVariable String accountId) {
+        return ResponseEntity.ok(
+                transactionService.getAccountSummary(accountId, email));
+    }
 }
