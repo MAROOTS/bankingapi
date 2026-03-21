@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
+    private final FraudDetectionService fraudDetectionService;
     private final TransactionRepository transactionRepository;
     private final BankAccountRepository accountRepository;
 
@@ -37,7 +38,10 @@ public class TransactionService {
                 .description(request.getDescription() !=null ?
                         request.getDescription() : "Deposit")
                 .build();
-        return TransactionResponse.from(transactionRepository.save(transaction));
+
+        Transaction saved = transactionRepository.save(transaction);
+        fraudDetectionService.analyze(saved, account);
+        return TransactionResponse.from(saved);
     }
 
     @Transactional
@@ -58,7 +62,9 @@ public class TransactionService {
                 .description(request.getDescription() !=null ?
                         request.getDescription() : "withdraw")
                 .build();
-        return TransactionResponse.from(transactionRepository.save(transaction));
+        Transaction saved = transactionRepository.save(transaction);
+        fraudDetectionService.analyze(saved, account);
+        return TransactionResponse.from(saved);
     }
 
     public TransactionResponse transfer(String email, TransferRequest request){
@@ -89,7 +95,9 @@ public class TransactionService {
                 .description(request.getDescription() != null ?
                         request.getDescription() : "Transfer")
                 .build();
-        return TransactionResponse.from(transactionRepository.save(transaction));
+        Transaction saved = transactionRepository.save(transaction);
+        fraudDetectionService.analyze(saved, source);
+        return TransactionResponse.from(saved);
     }
 
     public List<TransactionResponse> getAccountTransactions(String accountId,String email){
