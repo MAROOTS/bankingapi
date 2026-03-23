@@ -23,11 +23,15 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean active = true;
     private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate(){
         createdAt = LocalDateTime.now();
+        if (role == null) role = Role.CUSTOMER;
     }
 
     public enum Role{
