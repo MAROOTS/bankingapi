@@ -1,5 +1,6 @@
 package com.example.banking.security;
 
+import com.example.banking.filter.RateLimitFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
-
+    private final RateLimitFilter rateLimitFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
         http
@@ -30,6 +31,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
