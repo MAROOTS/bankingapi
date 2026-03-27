@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FraudDetectionService {
     private final FraudAlertRepository fraudAlertRepository;
-
+    private final EmailService emailService;
     private static final BigDecimal LARGE_TRANSACTION_THRESHOLD = new BigDecimal("10000.00");
     private static final int MAX_TRANSFERS_PER_HOUR = 3;
     private static final int LATE_NIGHT_START = 0;  // midnight
@@ -101,9 +101,15 @@ public class FraudDetectionService {
                 .status(FraudAlert.FraudStatus.OPEN)
                 .build();
         fraudAlertRepository.save(alert);
-
+        emailService.sendFraudAlertEmail(
+                account.getOwner().getEmail(),
+                account.getOwner().getFullName(),
+                reason.name(),
+                account.getAccountNumber(),
+                details
+        );
         transaction.setStatus(Transaction.TransactionStatus.FLAGGED);
-        log.warn("🚨 Fraud alert raised: {} - {} - {}",
+        log.warn("Fraud alert raised: {} - {} - {}",
                 reason, account.getAccountNumber(), details);
     }
 
