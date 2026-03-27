@@ -20,6 +20,7 @@ public class TransactionService {
     private final FraudDetectionService fraudDetectionService;
     private final TransactionRepository transactionRepository;
     private final BankAccountRepository accountRepository;
+    private final EmailService emailService;
 
     @Transactional
     public TransactionResponse deposit(String email, DepositWithdrawRequest request){
@@ -41,6 +42,15 @@ public class TransactionService {
 
         Transaction saved = transactionRepository.save(transaction);
         fraudDetectionService.analyze(saved, account);
+        emailService.sendTransactionEmail(
+                saved.getDestinationAccount().getOwner().getEmail(),
+                saved.getDestinationAccount().getOwner().getFullName(),
+                "DEPOSIT",
+                saved.getAmount(),
+                saved.getDestinationAccount().getAccountNumber(),
+                saved.getBalanceAfter(),
+                saved.getDescription()
+        );
         return TransactionResponse.from(saved);
     }
 
@@ -64,6 +74,15 @@ public class TransactionService {
                 .build();
         Transaction saved = transactionRepository.save(transaction);
         fraudDetectionService.analyze(saved, account);
+        emailService.sendTransactionEmail(
+                saved.getSourceAccount().getOwner().getEmail(),
+                saved.getSourceAccount().getOwner().getFullName(),
+                "WITHDRAWAL",
+                saved.getAmount(),
+                saved.getSourceAccount().getAccountNumber(),
+                saved.getBalanceAfter(),
+                saved.getDescription()
+        );
         return TransactionResponse.from(saved);
     }
 
@@ -97,6 +116,15 @@ public class TransactionService {
                 .build();
         Transaction saved = transactionRepository.save(transaction);
         fraudDetectionService.analyze(saved, source);
+        emailService.sendTransactionEmail(
+                saved.getSourceAccount().getOwner().getEmail(),
+                saved.getSourceAccount().getOwner().getFullName(),
+                "TRANSFER",
+                saved.getAmount(),
+                saved.getSourceAccount().getAccountNumber(),
+                saved.getBalanceAfter(),
+                saved.getDescription()
+        );
         return TransactionResponse.from(saved);
     }
 

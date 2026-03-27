@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 30px auto; background: white;
+                     border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: #c62828; color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .body { padding: 30px; color: #333; }
+        .alert-box { background: #fff3e0; border-left: 4px solid #e65100;
+                     padding: 15px 20px; border-radius: 4px; margin: 20px 0; }
+        .details { background: #f9f9f9; border-radius: 6px; padding: 20px; margin: 20px 0; }
+        .details table { width: 100%; border-collapse: collapse; }
+        .details td { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .details td:first-child { color: #666; width: 40%; }
+        .details td:last-child { font-weight: bold; }
+        .footer { background: #f4f4f4; text-align: center;
+                  padding: 15px; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1> Fraud Alert</h1>
+    </div>
+    <div class="body">
+        <p>Hi <strong th:text="${name}">Customer</strong>,</p>
+
+        <div class="alert-box">
+            ⚠️ We have detected suspicious activity on your account.
+        </div>
+
+        <div class="details">
+            <table>
+                <tr>
+                    <td>Alert Reason</td>
+                    <td th:text="${reason}">LARGE_TRANSACTION</td>
+                </tr>
+                <tr>
+                    <td>Account</td>
+                    <td th:text="${accountNumber}">BNK123456789</td>
+                </tr>
+                <tr>
+                    <td>Details</td>
+                    <td th:text="${details}">Transaction details</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td th:text="${date}">2026-01-01</td>
+                </tr>
+            </table>
+        </div>
+
+        <p>If this was you, no action is needed. If you did <strong>not</strong>
+            authorize this, please contact us immediately.</p>
+        <p>Best regards,<br/><strong>Digital Banking Security Team</strong></p>
+    </div>
+    <div class="footer">
+        &copy; 2026 Digital Banking. All rights reserved.
+    </div>
+</div>
+</body>
+</html>

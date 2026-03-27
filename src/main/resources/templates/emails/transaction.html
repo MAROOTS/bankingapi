@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 30px auto; background: white;
+                     border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header { background: #1a73e8; color: white; padding: 30px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .body { padding: 30px; color: #333; }
+        .details { background: #f9f9f9; border-radius: 6px; padding: 20px; margin: 20px 0; }
+        .details table { width: 100%; border-collapse: collapse; }
+        .details td { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .details td:first-child { color: #666; width: 40%; }
+        .details td:last-child { font-weight: bold; }
+        .amount-positive { color: #2e7d32; font-size: 20px; }
+        .amount-negative { color: #c62828; font-size: 20px; }
+        .footer { background: #f4f4f4; text-align: center;
+                  padding: 15px; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Transaction Notification</h1>
+    </div>
+    <div class="body">
+        <p>Hi <strong th:text="${name}">Customer</strong>,</p>
+        <p>A transaction has been made on your account.</p>
+
+        <div class="details">
+            <table>
+                <tr>
+                    <td>Transaction Type</td>
+                    <td th:text="${type}">DEPOSIT</td>
+                </tr>
+                <tr>
+                    <td>Amount</td>
+                    <td>
+                        <span th:class="${type == 'DEPOSIT'} ? 'amount-positive' : 'amount-negative'"
+                              th:text="'KES ' + ${amount}">KES 1000.00</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Account</td>
+                    <td th:text="${accountNumber}">BNK123456789</td>
+                </tr>
+                <tr>
+                    <td>Balance After</td>
+                    <td th:text="'KES ' + ${balanceAfter}">KES 5000.00</td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td th:text="${description}">Deposit</td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td th:text="${date}">2026-01-01</td>
+                </tr>
+            </table>
+        </div>
+
+        <p>If you did not authorize this transaction, please contact us immediately.</p>
+        <p>Best regards,<br/><strong>Digital Banking Team</strong></p>
+    </div>
+    <div class="footer">
+        &copy; 2026 Digital Banking. All rights reserved.
+    </div>
+</div>
+</body>
+</html>
