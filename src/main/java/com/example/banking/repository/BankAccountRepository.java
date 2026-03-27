@@ -15,5 +15,6 @@ public interface BankAccountRepository extends JpaRepository<BankAccount,String>
             BankAccount.AccountStatus status);
 
     List<BankAccount> findByStatus(BankAccount.AccountStatus status);
+    long countByStatus(BankAccount.AccountStatus status);
 
 }
